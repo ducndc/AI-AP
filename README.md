@@ -14,8 +14,6 @@ git clone https://github.com/tensorflow/tensorflow.git
 cd tensorflow
 git checkout v2.14.0  # hoặc phiên bản bạn cần
 
-## 2. Build TensorFlow Lite C API (CMAKE)
-
 cd tensorflow/lite
 mkdir build && cd build
 
