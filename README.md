@@ -12,7 +12,7 @@ This guide shows how to **clone and build TensorFlow Lite's C API** using CMake,
 ```bash
 git clone https://github.com/tensorflow/tensorflow.git
 cd tensorflow
-git checkout v2.14.0  # hoặc phiên bản bạn cần
+git checkout v2.14.0  
 
 cd tensorflow/lite
 mkdir build && cd build
