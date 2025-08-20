@@ -49,32 +49,42 @@ class STRDualRadio(Scene):
 
         # ==== Phase C: STR frame exchanges happen concurrently ====
         # Link 1 (UL): STA -> AP PPDU + ACK
-        ppdu_ul = pkt("UL PPDU", GREEN).move_to(sta.get_left()+UP*1.2)
-        ack_ul  = pkt("ACK", YELLOW).move_to(ap.get_right()+UP*1.2)
+        ack_ul1  = pkt("ACK", YELLOW).move_to(ap.get_right()+UP*1.2)
+        ack_ul2  = pkt("ACK", YELLOW).move_to(ap.get_right()+DOWN*1.2)
+        ppdu_ul1 = pkt("UL PPDU", ORANGE).move_to(sta.get_left()+UP*1.2)
+        ppdu_ul2 = pkt("UL PPDU", ORANGE).move_to(sta.get_left()+DOWN*1.2)
 
         # Link 2 (DL): AP -> STA PPDU + ACK
-        ppdu_dl = pkt("DL PPDU", TEAL).move_to(ap.get_right()+DOWN*1.2)
-        ack_dl  = pkt("ACK", YELLOW).move_to(sta.get_left()+DOWN*1.2)
+        ppdu_dl1 = pkt("DL PPDU", TEAL).move_to(ap.get_right()+UP*1.2)
+        ppdu_dl2 = pkt("DL PPDU", TEAL).move_to(ap.get_right()+DOWN*1.2)
+        ack_dl1  = pkt("ACK", YELLOW).move_to(sta.get_left()+UP*1.2)
+        ack_dl2  = pkt("ACK", YELLOW).move_to(sta.get_left()+DOWN*1.2)
 
         # Tô màu trạng thái hoạt động đồng thời
         self.play(link1.animate.set_color(GREEN), link2.animate.set_color(TEAL))
 
         # Chạy đồng thời UL (Link1) và DL (Link2)
         self.play(
-            AnimationGroup(
-                run_packet(ppdu_ul, path1_STA2AP, t=4.0),
-                run_packet(ppdu_dl, path2_AP2STA, t=4.0),
-                lag_ratio=0.0  # truly simultaneous
-            )
+            run_packet(ppdu_ul1, path1_STA2AP, t=4.0),
+            run_packet(ppdu_ul2, path2_STA2AP, t=4.0)
         )
 
         # ACK đồng thời ngược chiều
         self.play(
-            AnimationGroup(
-                run_packet(ack_ul,  path1_AP2STA, t=4.0),
-                run_packet(ack_dl,  path2_STA2AP, t=4.0),
-                lag_ratio=0.0
-            )
+            run_packet(ack_ul1,  path1_AP2STA, t=4.0),
+            run_packet(ack_ul2,  path2_AP2STA, t=4.0)
+        )
+
+        # Chạy đồng thời DL (Link1) và DL (Link2)
+        self.play(
+            run_packet(ppdu_dl1, path1_AP2STA, t=4.0),
+            run_packet(ppdu_dl2, path2_AP2STA, t=4.0)
+        )
+
+        # ACK đồng thời ngược chiều
+        self.play(
+            run_packet(ack_dl1,  path1_STA2AP, t=4.0),
+            run_packet(ack_dl2,  path2_STA2AP, t=4.0)
         )
 
         self.wait(2)
